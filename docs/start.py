@@ -17,6 +17,7 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--mode')
     parser.add_argument('-o', '--output')
     parser.add_argument('-amk', '--aminoacid')
+    parser.add_argument('--dpi', type=int, default=300, help='Качество изображений (по умолчанию: 300)')
     args = parser.parse_args()
 
     if args.mode == 'DNA':
