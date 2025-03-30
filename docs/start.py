@@ -24,3 +24,7 @@ if __name__ == '__main__':
         process_alignment_DNA(args.input, args.output)
     elif args.mode == 'protein':
         process_alignment_protein(args.input, args.output, args.aminoacid)
+    
+    df, data_type = load_data(args.-i)
+    id_matrix, sim_matrix = create_matrices(df, data_type)
+    plot_heatmaps(id_matrix, sim_matrix, data_type)
