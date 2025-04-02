@@ -1,22 +1,51 @@
-# Alignment-project
-Проет по предмету "Программирование на языке python" в СПбГУ
+## APS_DoP (Alignment Pairwise Statistics DNA or Protein)
 
-Входные данные: мультиФАСТА со множественным выравниванием последовательностей ДНК или белков и группы сходных остатков через запятую, по типу «GAVLI, FYW, CM, ST, KRH, DENQ, P» для аминокислот. 
+### version 1.0
 
-Выходные данные: таблица 1 следующего формата: 
+APS_DoP is a command-line tool for analyzing multiple sequence alignments of DNA or protein sequences. It provides detailed information on sequence identity and similarity, useful for studying evolutionary relationships, domain conservation, and other bioinformatics tasks.
 
-столбец 1 – идентификатор последовательности 1, 
+## Installation
 
-столбец 2 – идентификатор последовательности 2, 
+```
+git clone https://github.com/Nichcka/APS_DoP``
+cd APS_DoP
+pip install poetry
+poetry install
+```
 
-столбец 3 – процент идентичности между последовательностями 1 и 2, вычисленный наоснове выравнивания, 
+Run tests to ensure correct program functionality: `pytest`
 
-столбец 4 – процент сходства между последовательностями, вычисленный на основе выравнивания и групп сходных остатков (считаем, что остатки внутри группы равны друг другу), 
+## Key Features
+Identity and Similarity Analysis: APS_DoP calculates the percentage of identity and similarity for each sequence pair in the provided multiple sequence alignment. Similarity is computed based on a user-defined set of residue groups (e.g., "GAVLI, FYW, CM, ST, KRH, DENQ, P" for amino acids), where residues within each group are considered equivalent.
 
-столбец 5 – общая длина выравнивания двух последовательностей. 
+Pairwise Comparisons: The tool performs pairwise comparisons of all sequences in the alignment, providing a comprehensive overview of the relationships between them.
 
-Строки в таблице – попарные сочетания последовательностей в множественном выравнивании. 
+Tabular Output: APS_DoP generates a tab-separated values (.tsv) table containing the following information for each sequence pair:
 
-График 2 и 3 – тепловые карты идентичности и сходства попарных сравнений последовательностей.
+- Column 1: Identifier of sequence 1 
+- Column 2: Identifier of sequence 2 
+- Column 3: Percent identity between sequences 1 and 2, calculated from the alignment 
+- Column 4: Percent similarity between sequences, calculated based on the alignment and the defined residue groups (residues within a group are considered equivalent)
+- Column 5: Total alignment length of the two sequences
 
-Выполняют Виниченко В.Б., Власевская А.Д., Цапулина Е.Д.
+Heatmaps (Plots): The tool generates identity and similarity heatmaps, visualizing the pairwise sequence comparisons. This allows for quick identification of clusters of similar sequences and the detection of patterns.
+
+## Input
+A multi-FASTA file containing a multiple sequence alignment of DNA or protein sequences, and comma-separated groups of similar residues (e.g., "GAVLI, FYW, CM, ST, KRH, DENQ, P" for amino acids). 
+
+## Quick usage
+for DNA:
+
+``python aps_dop/APS_DoP.py -i input.fasta -m DNA -o output.tsv``
+
+for protein:
+
+``python aps_dop/APS_DoP.py -i input.fasta  -m protein -o output.tsv -amk GA,ST,NDEQ,KRH,VILM,YWF,CP``
+
+## Contributers
+A project for the "Python Programming" course at St. Petersburg State University
+
+Code contributors:
+- Vinichenko Veronika
+- Vlasevskaya Anastasia
+- Tsapulina Ekaterina
