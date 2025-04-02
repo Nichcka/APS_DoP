@@ -34,7 +34,9 @@ def plot_heatmaps(id_matrix, sim_matrix, data_type):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     
     # График идентичности
-    plt.figure(figsize=(10, 8))
+    matrix_size = id_matrix.shape[0]
+    figsize = (max(10, matrix_size * 0.8), max(8, matrix_size * 0.6))  # Adjust factors
+    plt.figure(figsize=figsize)
     sns.heatmap(id_matrix, annot=True, fmt=".1f", cmap="YlOrRd", vmin=0, vmax=100)
     plt.title("Pairwise Identity (%)")
     identity_file = f"results/identity_{timestamp}.png"
@@ -44,7 +46,9 @@ def plot_heatmaps(id_matrix, sim_matrix, data_type):
     
     # График сходства (только для белков)
     if data_type == 'protein':
-        plt.figure(figsize=(10, 8))
+        matrix_size = id_matrix.shape[0]
+        figsize = (max(10, matrix_size * 0.8), max(8, matrix_size * 0.6))  # Adjust factors
+        plt.figure(figsize=figsize)
         sns.heatmap(sim_matrix, annot=True, fmt=".1f", cmap="YlGnBu", vmin=0, vmax=100)
         plt.title("Pairwise Similarity (%)")
         similarity_file = f"results/similarity_{timestamp}.png"
