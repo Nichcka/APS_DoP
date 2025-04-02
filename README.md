@@ -7,7 +7,7 @@ APS_DoP is a command-line tool for analyzing multiple sequence alignments of DNA
 ## Installation
 
 ```
-git clone https://github.com/Nichcka/APS_DoP``
+git clone https://github.com/Nichcka/APS_DoP
 cd APS_DoP
 pip install poetry
 poetry install
