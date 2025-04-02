@@ -184,8 +184,9 @@ if __name__ == '__main__':
     elif args.mode == 'protein':
         if args.aminoacid is None:
             parser.error("--aminoacid is required when mode is 'protein'")
+        clear_aminoacid = [tuple(group.strip()) for group in args.aminoacid.split(',')]
         try:
-            process_alignment_protein(args.input, args.output, args.aminoacid)
+            process_alignment_protein(args.input, args.output, clear_aminoacid)
         except Exception as e:
             print(f"Error processing protein alignment: {e}")
 
