@@ -38,7 +38,7 @@ def process_alignment_DNA(alignment_file, output_file):
 
         for seq1, seq2 in pairs:
             # Calculate the percentage of identity
-            percent_identity = calculate_identity(str(seq1.seq), str(seq2.seq))
+            percent_identity = calculate_identity_DNA(str(seq1.seq), str(seq2.seq))
 
             # Output the result in table format and write it to a file
             outfile.write(f"{seq1.id}\t{seq2.id}\t{percent_identity:.2f}\t{len(seq1.seq)}\n")
@@ -103,7 +103,7 @@ def process_alignment_protein(alignment_file, output_file, similarity_groups):
         pairs = combinations(sequences, 2)
 
         for seq1, seq2 in pairs:
-            identity, similarity = calculate_identity_similarity(str(seq1.seq), str(seq2.seq), similarity_groups)
+            identity, similarity = calculate_identity_similarity_protein(str(seq1.seq), str(seq2.seq), similarity_groups)
             outfile.write(f"{seq1.id}\t{seq2.id}\t{identity:.2f}\t{similarity:.2f}\t{len(seq1.seq)}\n")
 
     print(f"The results are saved to file: {output_file}")   
