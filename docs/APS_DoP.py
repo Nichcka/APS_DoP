@@ -1,6 +1,10 @@
 from Bio import AlignIO
 from itertools import combinations
-import sys
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import os
+from datetime import datetime
 
 def calculate_identity_DNA(alignment1, alignment2):
     """
@@ -20,7 +24,7 @@ def process_alignment_DNA(alignment_file, output_file):
     Processes a FASTA alignment file and outputs a table of pairwise comparisons.
     Saves the results to the specified file.
     """
-
+    print(f"Processing DNA alignment from {alignment_file} to {output_file}")
     try:
         alignment = AlignIO.read(alignment_file, "fasta")
         sequences = list(alignment)
@@ -106,5 +110,85 @@ def process_alignment_protein(alignment_file, output_file, similarity_groups):
             identity, similarity = calculate_identity_similarity_protein(str(seq1.seq), str(seq2.seq), similarity_groups)
             outfile.write(f"{seq1.id}\t{seq2.id}\t{identity:.2f}\t{similarity:.2f}\t{len(seq1.seq)}\n")
 
-    print(f"The results are saved to file: {output_file}")   
+    print(f"The results are saved to file: {output_file}")
 
+def load_data(input_file):
+    if not os.path.exists(input_file):
+        raise FileNotFoundError(f"Файл {input_file} не найден!")
+    df = pd.read_csv(input_file, sep='\t')
+    data_type = 'protein' if 'Per_Sim' in df.columns else 'dna'
+    print(f"Тип данных: {data_type.upper()}")
+    return df, data_type
+
+def create_matrices(df, data_type):
+    all_ids = sorted(set(df['Seq_1']).union(set(df['Seq_2'])))
+    if data_type == 'dna':
+        identity_matrix = pd.DataFrame(100, index=all_ids, columns=all_ids)
+        for _, row in df.iterrows():
+            id1, id2 = row['Seq_1'], row['Seq_2']
+            identity_matrix.loc[id1, id2] = identity_matrix.loc[id2, id1] = row['Per_Id']
+        return identity_matrix, None
+    else:
+        identity_matrix = pd.DataFrame(100, index=all_ids, columns=all_ids)
+        similarity_matrix = pd.DataFrame(100, index=all_ids, columns=all_ids)
+        for _, row in df.iterrows():
+            id1, id2 = row['Seq_1'], row['Seq_2']
+            identity_matrix.loc[id1, id2] = row['Per_Id']
+            similarity_matrix.loc[id1, id2] = row['Per_Sim']
+        return identity_matrix, similarity_matrix
+
+
+def plot_heatmaps(id_matrix, sim_matrix, data_type):
+    os.makedirs("results", exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    # Identity Graph
+    matrix_size = id_matrix.shape[0]
+    figsize = (max(10, matrix_size * 0.8), max(8, matrix_size * 0.6))  # Adjust factors
+    plt.figure(figsize=figsize)
+    sns.heatmap(id_matrix, annot=True, fmt=".1f", cmap="YlOrRd", vmin=0, vmax=100)
+    plt.title("Pairwise Identity (%)")
+    identity_file = f"results/identity_{timestamp}.png"
+    plt.savefig(identity_file, bbox_inches='tight', dpi=300)
+    plt.close()
+    print(f"Сохранен: {identity_file}")
+
+    # Similarity plot (for proteins only)
+    if data_type == 'protein':
+        matrix_size = id_matrix.shape[0]
+        figsize = (max(10, matrix_size * 0.8), max(8, matrix_size * 0.6))  # Adjust factors
+        plt.figure(figsize=figsize)
+        sns.heatmap(sim_matrix, annot=True, fmt=".1f", cmap="YlGnBu", vmin=0, vmax=100)
+        plt.title("Pairwise Similarity (%)")
+        similarity_file = f"results/similarity_{timestamp}.png"
+        plt.savefig(similarity_file, bbox_inches='tight', dpi=300)
+        plt.close()
+        print(f"Сохранен: {similarity_file}")
+
+import argparse
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--input', required=True, help='Input file path')
+    parser.add_argument('-m', '--mode', required=True, choices=['DNA', 'protein'], help='Mode: DNA or protein')
+    parser.add_argument('-o', '--output', default='result_table.tsv', help='Output file path (default: result_table.tsv)')
+    parser.add_argument('-amk', '--aminoacid', help='Amino acid (required for protein mode)')
+    args = parser.parse_args()
+
+    if args.mode == 'DNA':
+        try:
+            process_alignment_DNA(args.input, args.output)
+        except Exception as e:
+            print(f"Error processing DNA alignment: {e}")
+
+    elif args.mode == 'protein':
+        if args.aminoacid is None:
+            parser.error("--aminoacid is required when mode is 'protein'")
+        try:
+            process_alignment_protein(args.input, args.output, args.aminoacid)
+        except Exception as e:
+            print(f"Error processing protein alignment: {e}")
+
+    df, data_type = load_data(args.output)
+    id_matrix, sim_matrix = create_matrices(df, data_type)
+    plot_heatmaps(id_matrix, sim_matrix, data_type)
