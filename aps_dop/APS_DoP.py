@@ -121,9 +121,10 @@ def process_alignment_protein(alignment_file, output_file_base, similarity_group
     print(f"The results are saved to file: {output_file}")
 
 def load_data(input_file):
-    if not os.path.exists(input_file):
+    full_path = os.path.join("results", input_file)
+    if not os.path.exists(full_path):
         raise FileNotFoundError(f"File {input_file} doesn't found!")
-    df = pd.read_csv(input_file, sep='\t')
+    df = pd.read_csv(full_path, sep='\t')
     data_type = 'protein' if 'Per_Sim' in df.columns else 'dna'
     print(f"Type of data: {data_type.upper()}")
     return df, data_type
