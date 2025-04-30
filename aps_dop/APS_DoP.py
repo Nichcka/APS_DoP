@@ -13,7 +13,7 @@ def calculate_identity_DNA(alignment1, alignment2):
     matches = 0
     alignment_length = len(alignment1)
     for i in range(alignment_length):
-        if alignment1[i] == alignment2[i] and alignment1[i] != '-':
+        if alignment1[i] == alignment2[i]:
             matches += 1
 
     return (matches / alignment_length) * 100 if alignment_length > 0 else 0
@@ -64,7 +64,7 @@ def calculate_identity_similarity_protein(alignment1, alignment2, similarity_gro
         if i >= len(alignment1) or i >= len(alignment2):
             continue
 
-        if alignment1[i] == alignment2[i] and alignment1[i] != '-':
+        if alignment1[i] == alignment2[i]:
             matches += 1
             similar += 1  # Identical is always similar
 
