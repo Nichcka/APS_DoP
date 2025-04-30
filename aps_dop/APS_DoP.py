@@ -19,12 +19,17 @@ def calculate_identity_DNA(alignment1, alignment2):
     return (matches / alignment_length) * 100 if alignment_length > 0 else 0
 
 
-def process_alignment_DNA(alignment_file, output_file):
+def process_alignment_DNA(alignment_file, output_file_base):
     """
     Processes a FASTA alignment file and outputs a table of pairwise comparisons.
     Saves the results to the specified file.
     """
     print(f"Processing DNA alignment from {alignment_file} to {output_file}")
+    
+    results_dir = "results"
+    os.makedirs("results", exist_ok=True)
+    output_file = os.path.join(results_dir, output_file_base)
+    
     try:
         alignment = AlignIO.read(alignment_file, "fasta")
         sequences = list(alignment)
@@ -81,8 +86,13 @@ def calculate_identity_similarity_protein(alignment1, alignment2, similarity_gro
     return identity, similarity
 
 
-def process_alignment_protein(alignment_file, output_file, similarity_groups):
+def process_alignment_protein(alignment_file, output_file_base, similarity_groups):
     """Processes a FASTA alignment file and outputs a table of pairwise comparisons."""
+    print(f"Processing protein alignment from {alignment_file} to {output_file}")
+    
+    results_dir = "results"
+    os.makedirs("results", exist_ok=True)
+    output_file = os.path.join(results_dir, output_file_base)
 
     try:
         alignment = AlignIO.read(alignment_file, "fasta")
